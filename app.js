@@ -17,6 +17,14 @@ app.use(mehtodOverride("_method"));
 // to use params in show route
 app.use(express.urlencoded({extended: true}));
 
+// styling ke liye ejs mate
+const ejsMate = require("ejs-mate");
+app.engine('ejs', ejsMate);
+
+// to use static files like css
+app.use(express.static(path.join(__dirname, "/public")));
+
+
 // database creation and connection
 const MONGO_URL = "mongodb://127.0.0.1:27017/wanderlust";
 main()
