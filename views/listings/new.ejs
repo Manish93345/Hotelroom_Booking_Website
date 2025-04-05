@@ -3,31 +3,37 @@
 <div class="row">
 <div class="col-8 offset-2">
     <h3>Create a new Listing</h3>
-    <form action="/listings" method="post">
+    <form action="/listings" method="post" novalidate class="needs-validation">
         <div class="mb-3">
             <label for="title" class="form-label">Title</label>
-            <input type="text" name="listing[title]" placeholder="Add a catchy title" class="form-control">
+            <input type="text" name="listing[title]" placeholder="Add a catchy title" class="form-control" required>
+            <div class="valid-feedback">Title looks good !</div>
         </div>
         <div class="mb-3">
             <label for="description" class="form-label">Description</label>
-            <textarea name="listing[description]" id="description" class="form-control"></textarea>
-        </div>
+            <textarea name="listing[description]" id="description" class="form-control" required></textarea>
+            <div class="invalid-feedback">Please enter a short description</div>
+        </div> 
         <div class="mb-3">
             <label for="image" class="form-label">Image URL</label>
             <input type="text" name="listing[image]" class="form-control" placeholder="Enter image URL">
         </div>
         <div class="mb-3">
             <label for="location" class="form-label">Location</label>
-            <input type="text" name="listing[location]" class="form-control">
+            <input type="text" name="listing[location]" class="form-control" required>
+            <div class="invalid-feedback">Location should be valid</div>
         </div>
         <div class="row">
             <div class="mb-3 col-4">
                 <label for="price" class="form-label">Price</label>
-                <input type="number" name="listing[price]" class="form-control" placeholder="12,000">
+                <input type="number" name="listing[price]" class="form-control" placeholder="12,000" required>
+                <div class="invalid-feedback">Please enter a valid price</div>
+                
             </div>
             <div class="mb-3 col-8">
                 <label for="country" class="form-label">Country</label>
-                <input type="text" name="listing[country]" class="form-control" placeholder="India">
+                <input type="text" name="listing[country]" class="form-control" placeholder="India" required>
+                <div class="invalid-feedback">Enter a county</div>
             </div>
         </div>
         

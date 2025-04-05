@@ -24,6 +24,13 @@ app.engine('ejs', ejsMate);
 // to use static files like css
 app.use(express.static(path.join(__dirname, "/public")));
 
+const wrapAsync = require("./utils/wrapAsync.js");
+
+//requiring expresserror for custom errors
+const ExpressError = require("./utils/ExpressError.js");
+
+// requiriring listing schema to validate our databse schmea
+const {listingSchema} = require("./schema.js");
 
 // database creation and connection
 const MONGO_URL = "mongodb://127.0.0.1:27017/wanderlust";
@@ -80,12 +87,16 @@ app.get("/listings/new", (req, res) => {
 
 // create route after adding new listing
 // ye async type ka hoga kyunki isse database mein changes karne wale hain
-app.post("/listings", async (req, res) => {
-    // let listing = req.body.listing;
+app.post("/listings",wrapAsync (async (req, res, next) => {
+    let result = listingSchema.validate(req.body);
+    console.log(result);
     const newListing = new Listing(req.body.listing);
+    
     await newListing.save();
     res.redirect("/listings");
-});
+   
+    
+}));
 
 // show route (READ)
 app.get("/listings/:id",async (req, res) => {
@@ -116,4 +127,12 @@ app.delete("/listings/:id", async(req, res) => {
     res.redirect("/listings"); 
 });
 
+app.use((err, req, res, next) => {
+    let {statusCode, message} = err;
+    res.render("error.ejs", {message});
+  
+});
 
+app.all("*", (req, res, next) => {
+    next(new ExpressError(404, "Page not found"));
+}); 
