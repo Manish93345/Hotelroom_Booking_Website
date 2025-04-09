@@ -30,7 +30,7 @@ const wrapAsync = require("./utils/wrapAsync.js");
 const ExpressError = require("./utils/ExpressError.js");
 
 // requiriring listing schema to validate our databse schmea
-const {listingSchema} = require("./schema.js");
+const {listingSchema, reviewSchema} = require("./schema.js");
 
 // database creation and connection
 const MONGO_URL = "mongodb://127.0.0.1:27017/wanderlust";
@@ -43,6 +43,18 @@ main()
 async function main(){
     await mongoose.connect(MONGO_URL);
 }
+
+const Review = require("./models/review.js")
+
+const validateReview = (req, res, next) => {
+    let {error} = reviewSchema.validate(req.body);
+    if(error) {
+        let errMsg = error.details.map((el) => el.message).join(",");
+        throw new ExpresssError(400, errMsg);
+    } else {
+        next();
+    }
+};
 
 
 app.listen(8080, () => {
@@ -101,7 +113,7 @@ app.post("/listings",wrapAsync (async (req, res, next) => {
 // show route (READ)
 app.get("/listings/:id",async (req, res) => {
     let {id} = req.params;
-    const listing = await Listing.findById(id);
+    const listing = await Listing.findById(id).populate("reviews");
     res.render("./listings/show.ejs", {listing} );
 });
 
@@ -127,12 +139,37 @@ app.delete("/listings/:id", async(req, res) => {
     res.redirect("/listings"); 
 });
 
+app.post("/listings/:id/reviews",validateReview, wrapAsync(async(req, res) => {
+    let listing = await Listing.findById(req.params.id);
+    let newReview = new Review(req.body.review);
+
+    listing.reviews.push(newReview);
+
+    await newReview.save();
+    await listing.save();
+
+    console.log("new review saved");
+    res.redirect("/listings");
+}));
+
 app.use((err, req, res, next) => {
     let {statusCode, message} = err;
     res.render("error.ejs", {message});
   
 });
 
-app.all("*", (req, res, next) => {
+// to delete ratings and comment
+app.delete("/listings/:id/reviews/:reviewId", wrapAsync(async (req, res) => {
+    let {id, reviewId} = req.params;
+    await Review.findByIdAndDelete(reviewId);
+    await Listing.findByIdAndUpdate(id, {$pill: {reviews: reviewId}});
+    res.redirect(`/listings/${id}`);
+}));
+
+
+
+app.use("*", (req, res, next) => {
     next(new ExpressError(404, "Page not found"));
 }); 
+
+

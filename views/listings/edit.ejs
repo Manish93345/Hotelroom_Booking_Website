@@ -1,4 +1,6 @@
 <% layout("/layouts/boilerplate") %>
+<%- include("../partials/loader.ejs") %>
+<link rel="stylesheet" href="/css/loader.css">
 <br><br>
 <div class="row">
 <div class="col-8 offset-2">
@@ -43,4 +45,17 @@
     </form>
 </div>
 </div>
+
+<script>
+    // Show loader on form submit
+    const form = document.querySelector("form");
+    const loader = document.getElementById("loader");
+  
+    if(form){
+      form.addEventListener("submit", function() {
+        loader.style.display = "flex";
+      });
+    }
+  </script>
+  
 
