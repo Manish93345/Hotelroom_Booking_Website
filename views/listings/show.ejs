@@ -34,6 +34,8 @@
 <% } %>
 <hr>
 
+
+<% if(currUser) { %>
 <div class="row mb-3">
     <h2 class="mb-3">Leave a Review</h2>
     <form action="/listings/<%=listing.id%>/reviews" method="post">
@@ -48,6 +50,7 @@
         <button class="btn btn-outline-primary">Sumbit</button>
     </form>
 
+<% } %>
     <hr>
 
     <h4>All Reviews</h4>
@@ -56,7 +59,7 @@
         <div class="row col-6 ms-3 mb-3">        
             <div class="card">
             <div class="card-body">
-                <h5 class="card-title">Raushan</h5>
+                <h5 class="card-title"><%= review.author.username%></h5>
                 <p class="card-text"><%=review.comment%></p>
                 <p class="card-text"><%=review.rating%>star</p>
             </div>

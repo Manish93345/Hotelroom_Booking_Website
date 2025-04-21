@@ -5,6 +5,7 @@ const {listingSchema, reviewSchema} = require("../schema.js");
 const ExpressError = require("../utils/ExpressError.js");
 const Listing = require("../models/listing.js");
 const {isLoggedIn, isOwner} = require("../middleware.js");
+const User = require("../models/user.js");
 
 const validateListing = (req, res, next) => {
     let {error} = listingSchema.validate(req.body);
@@ -41,14 +42,17 @@ router.post("/",wrapAsync (async (req, res, next) => {
 }));
 
 // show route (READ)
-router.get("/:id",async (req, res) => {
-    let {id} = req.params;
-    const listing = await Listing.findById(id).populate("reviews").populate("owner");
-    if(!listing){
-        req.flash("error", "Listing does'nt exist");
-        res.redirect("/listings");
+router.get("/:id", async (req, res) => {
+    let { id } = req.params;
+    const listing = await Listing.findById(id).populate({
+        path: "reviews",
+        populate: { path: "author" },
+    }).populate("owner");
+    if (!listing) {
+        req.flash("error", "Listing doesn't exist");
+        return res.redirect("/listings");
     }
-    res.render("./listings/show.ejs", {listing} );
+    res.render("./listings/show.ejs", { listing });
 });
 
 // edit route
