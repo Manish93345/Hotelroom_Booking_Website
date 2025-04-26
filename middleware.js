@@ -5,7 +5,7 @@ module.exports.isLoggedIn = (req, res, next) => {
     if(!req.isAuthenticated()){
         // redirect url ko save karna hai taki login ke baad wo jiss page par jana chahta hai uss par redirect ho
         req.session.redirectUrl = req.originalUrl;
-        req.flash("error", "you must be logged in to create listing");
+        req.flash("error", "You are not authorized, login first");
         return res.redirect("/login");
     }
     next();

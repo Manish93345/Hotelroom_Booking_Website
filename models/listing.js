@@ -8,9 +8,8 @@ const listingSchema = new Schema({
     },
     description: String,
     image: {
-        type: String,
-        default: "https://unsplash.com/photos/sunrise-illuminates-a-beautiful-lake-and-snowy-mountains-8Jbo0T-DxUI",
-        set: (v) => v === "" ? "https://unsplash.com/photos/sunrise-illuminates-a-beautiful-lake-and-snowy-mountains-8Jbo0T-DxUI" : v,
+        url: String,
+        filename: String,
     },
     price: Number,
     location: String,
