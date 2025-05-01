@@ -40,12 +40,20 @@ module.exports.createListing = (async (req, res, next) => {
 module.exports.renderEditForm = async (req, res) => {
     let {id} = req.params;
     const listing = await Listing.findById(id);
-    res.render("./listings/edit.ejs", {listing} );
+    let originalImageUrl = listing.image.url;
+    originalImageUrl.replace("/upload", "/upload/h_300,w_250");
+    res.render("./listings/edit.ejs", {listing, originalImageUrl} );
 }
 
 module.exports.updateListing = async (req, res) => {
     let {id} = req.params;
-    await Listing.findByIdAndUpdate(id, {...req.body.listing});  // req.body.listing ko deconstruct kar rhe hain
+    let listing = await Listing.findByIdAndUpdate(id, {...req.body.listing});  // req.body.listing ko deconstruct kar rhe hain
+    if(typeof req.file != "undefined"){
+        let url = req.file.path;
+        let filename = req.file.filename;
+        listing.image = {url, filename};
+        await listing.save();
+    }
     req.flash("success", "Listing updated");
     res.redirect(`/listings/${id}`);
 }

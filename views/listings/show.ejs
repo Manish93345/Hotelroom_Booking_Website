@@ -71,6 +71,7 @@
   <br>
     <hr> 
 
+    <% if(listing.reviews.length>0) {%> 
     <h4>All Reviews</h4>
     
     <% for(review of listing.reviews) { %>
@@ -91,6 +92,7 @@
         </div>
         
     </div>
+<% } %>
 
     <% } %>
 </div>
