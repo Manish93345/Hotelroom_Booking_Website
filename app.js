@@ -126,6 +126,9 @@ app.use((req, res, next) => {
 
 app.use("/listings", listingRouter);
 app.use("/listings/:id/reviews", reviewRouter);
+app.get("/", (req, res) => {
+    res.render("navbar"); // Make sure navbar.ejs exists in your views folder
+});
 app.use("/", userRouter);
 
 
